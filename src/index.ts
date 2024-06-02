@@ -17,7 +17,7 @@ bot.on('message', async (msg) => {
     console.log(msg);
 
     if(text === '/start') {
-        await bot.sendMessage(chatId, `Hello, ${firstName} jan! My name is Botik)`, {
+        await bot.sendMessage(chatId, `Hello, ${firstName} jan! My name is Botikula)`, {
             reply_markup: {
                 inline_keyboard: [
                     [{ text: "Open Botik's app", web_app: { url: WEB_APP_URL } }]
