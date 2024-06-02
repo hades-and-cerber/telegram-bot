@@ -12,17 +12,17 @@ const bot = new TelegramBot(TOKEN, { polling: true });
 bot.on('message', async (msg) => {
     const chatId = msg.chat.id;
     const text = msg.text;
+    const firstName = msg.chat.first_name;
 
     if(text === '/start') {
-        await bot.sendMessage(chatId, "Let's start axpers", {
+        await bot.sendMessage(chatId, `Hello, ${firstName} jan! My name is Botik)`, {
             reply_markup: {
                 inline_keyboard: [
-                    [{ text: "Click here", web_app: { url: WEB_APP_URL } }]
+                    [{ text: "Open Botik's app", web_app: { url: WEB_APP_URL } }]
                 ]
             }
         });
     }
-
 });
 //
 // bot.on('callback_query', (callbackQuery) => {
