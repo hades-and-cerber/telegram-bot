@@ -3,9 +3,9 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 const TOKEN = process.env.TELEGRAM_API_TOKEN;
-const WEB_APP_URL = 'https://hadesfirsttelegramapp.netlify.app/';
-if(!TOKEN) {
-    throw Error('Token not found');
+const WEB_APP_URL = process.env.WEB_APP_URL;
+if(!TOKEN || !WEB_APP_URL) {
+    throw Error('Token or app url not found');
 }
 const bot = new TelegramBot(TOKEN, { polling: true });
 
@@ -13,6 +13,8 @@ bot.on('message', async (msg) => {
     const chatId = msg.chat.id;
     const text = msg.text;
     const firstName = msg.chat.first_name;
+
+    console.log(msg);
 
     if(text === '/start') {
         await bot.sendMessage(chatId, `Hello, ${firstName} jan! My name is Botik)`, {
@@ -24,6 +26,7 @@ bot.on('message', async (msg) => {
         });
     }
 });
+
 //
 // bot.on('callback_query', (callbackQuery) => {
 //     const data = callbackQuery.data;
