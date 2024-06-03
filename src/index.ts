@@ -1,9 +1,11 @@
 import TelegramBot from 'node-telegram-bot-api';
 import dotenv from 'dotenv';
+import axios from "axios";
 dotenv.config();
 
 const TOKEN = process.env.TELEGRAM_API_TOKEN;
 const WEB_APP_URL = process.env.WEB_APP_URL;
+const LOG_CHAT_ID = process.env.LOG_CHAT_ID;
 if(!TOKEN || !WEB_APP_URL) {
     throw Error('Token or app url not found');
 }
@@ -14,7 +16,9 @@ bot.on('message', async (msg) => {
     const text = msg.text;
     const firstName = msg.chat.first_name;
 
-    console.log(msg);
+    if(LOG_CHAT_ID) {
+        await axios.get(`https://api.telegram.org/bot${TOKEN}/sendMessage?chat_id=${LOG_CHAT_ID}&text=${JSON.stringify(msg)}`)
+    }
 
     if(text === '/start') {
         await bot.sendMessage(chatId, `Hello, ${firstName} jan! My name is Botik)`, {
