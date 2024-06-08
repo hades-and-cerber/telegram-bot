@@ -1,18 +1,39 @@
 import { Router } from 'express';
 import db from '../db';
 import axios from 'axios';
+import dotenv from 'dotenv';
+import { Alchemy, Network } from 'alchemy-sdk';
+import { ethers } from 'ethers';
+
+dotenv.config();
 
 const router = Router();
+
+const settings = {
+    apiKey: process.env.ALCHEMY_API_KEY,
+    network: Network.ETH_SEPOLIA,
+};
+
+const alchemy = new Alchemy(settings);
 
 router.post('/', async (req, res) => {
     const { userId, token, chain } = req.body;
 
-    let depositAddress = '';
     try {
+        // Check if the user exists
+        const userResult = await db.query('SELECT id FROM users WHERE id = $1', [userId]);
+        if (userResult.rows.length === 0) {
+            return res.status(400).json({ error: 'User not found' });
+        }
+
+        let depositAddress = '';
         if (chain === 'TRC20') {
-            depositAddress = 'TTron_example_address';
+            const response = await axios.get(`https://api.trongrid.io/wallet/generateaddress`);
+            depositAddress = response.data.address;
         } else if (chain === 'ERC20') {
-            depositAddress = 'TEth_example_address';
+            // Generate a new Ethereum address using ethers
+            const wallet = ethers.Wallet.createRandom();
+            depositAddress = wallet.address;
         }
 
         const result = await db.query(

@@ -4,6 +4,7 @@ import bodyParser from 'body-parser';
 import dotenv from 'dotenv';
 import db from './db';
 import axios from 'axios';
+import depositRoutes from './routes/deposit';
 
 dotenv.config();
 
@@ -41,35 +42,11 @@ bot.on('message', async (msg) => {
     }
 });
 
-
 const app = express();
 app.use(bodyParser.json());
 
-
-app.post('/api/deposit', async (req, res) => {
-    const { userId, token, chain } = req.body;
-
-    let depositAddress = '';
-    try {
-        if (chain === 'TRC20') {
-
-            depositAddress = 'TTron_example_address';
-        } else if (chain === 'ERC20') {
-
-            depositAddress = 'TEth_example_address';
-        }
-
-        const result = await db.query(
-            'INSERT INTO deposits (user_id, token, chain, deposit_address) VALUES ($1, $2, $3, $4) RETURNING *',
-            [userId, token, chain, depositAddress]
-        );
-        res.json(result.rows[0]);
-    } catch (err) {
-        console.error('Error creating deposit:', err);
-        res.status(500).send('Server error');
-    }
-});
-
+// Use the deposit routes
+app.use('/api/deposit', depositRoutes);
 
 app.post('/api/withdraw', async (req, res) => {
     const { userId, token, chain, amount, withdrawalAddress } = req.body;
